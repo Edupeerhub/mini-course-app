@@ -1,0 +1,49 @@
+{
+  "name": "mini-course-api",
+  "version": "1.0.0",
+  "description": "A simple full-stack CRUD application with user authentication built as a one-week team project to practice modern web development workflows and collaboration.",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Edupeerhub/mini-course-app.git"
+  },
+  "keywords": [
+    "mongo",
+    "jwt",
+    "authentication",
+    "REST",
+    "CRUD"
+  ],
+  "author": "Edupeerhub",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Edupeerhub/mini-course-app/issues"
+  },
+  "homepage": "https://github.com/Edupeerhub/mini-course-app#readme"
+}
