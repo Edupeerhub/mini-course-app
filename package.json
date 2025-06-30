@@ -1,0 +1,35 @@
+{
+  "scripts": {
+    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
+    "start": "npm --prefix server run start",
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "test": "cd server && npm test",
+    "test:watch": "cd server && npm run test:watch",
+    "server:dev": "cd server && npm run dev",
+    "server:start": "cd server && npm start",
+    "client:dev": "cd client && npm run dev",
+    "client:build": "cd client && npm run build",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "install:server": "cd server && npm install",
+    "install:client": "cd client && npm install",
+    "lint": "npm run lint:client && npm run lint:server",
+    "lint:client": "eslint client/",
+    "lint:server": "eslint server/",
+    "lint:fix": "npm run lint:client:fix && npm run lint:server:fix",
+    "lint:client:fix": "eslint client/ --fix",
+    "lint:server:fix": "eslint server/ --fix",
+    "lint:check": "npm run lint:client:check && npm run lint:server:check",
+    "lint:client:check": "eslint client/ --max-warnings 0",
+    "lint:server:check": "eslint server/ --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:server": "prettier --write server/",
+    "format:client": "prettier --write client/"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "eslint": "^9.30.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.6.2"
+  }
+}
