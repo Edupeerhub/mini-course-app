@@ -52,7 +52,6 @@ mini-course-app/
 ├── client/                 # React frontend
 │   ├── public/
 │   ├── src/
-│   │   ├── api/           # API service functions
 │   │   ├── components/    # Reusable UI components
 │   │   ├── pages/         # Route-level components
 │   │   ├── utils/         # Helper functions
@@ -67,7 +66,8 @@ mini-course-app/
 │   ├── models/           # Data models
 │   ├── tests/            # Test files
 │   ├── config/           # Configuration files
-│   ├── index.js
+│   ├── app.js
+│   ├── server.js
 │   ├── package.json
 │   └── .env
 └── README.md
@@ -103,8 +103,8 @@ mini-course-app/
 4. Set up environment variables:
    ```bash
    # Copy example files and fill in your values
-   cp server/.env.example server/.env
-   cp client/.env.example client/.env
+   cp .env.example server/.env
+   cp .env.example client/.env
    ```
 
 5. Start the development servers:
