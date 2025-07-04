@@ -1,4 +1,8 @@
-require("dotenv").config();
+const NODE_ENV = process.env.NODE_ENV || "development";
+const path = require("path");
+require("dotenv").config({ path: path.normalize(`./.env.${NODE_ENV}` ) });
+
+
 const express = require("express");
 const cors = require("cors");
 const logger = require("morgan");
