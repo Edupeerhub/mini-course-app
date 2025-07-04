@@ -12,27 +12,20 @@ const courseSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    credits:{
-        type: Number,
-        required: true,
+    courseCode: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    instructor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    credits: {
+      type: Number,
       required: true,
     },
-    department: {
-      type: String,      
-      required: true,
-    },
-    students: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
 
-    
+    department: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

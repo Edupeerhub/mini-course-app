@@ -12,7 +12,9 @@ const courseRouter = require("./route/course.route");
 app.use(logger("dev"));
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json(), (error, req, res, next) => {
+  res.status(400).send("Bad Request: Invalid Json");
+});
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Course CRUD App!");
