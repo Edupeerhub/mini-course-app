@@ -1,7 +1,9 @@
 import "./App.css";
 
 function App() {
-  return <>Welcome to the course app</>;
+  return (
+    <h1 className="text-3xl font-bold underline">Welcome to the course app</h1>
+  );
 }
 
 export default App;
