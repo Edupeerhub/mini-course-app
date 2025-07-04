@@ -4,6 +4,7 @@ const cors = require("cors");
 const logger = require("morgan");
 const app = express();
 
+const courseRouter  = require("./route/course.route");
 // Middleware
 app.use(logger("dev"));
 app.use(cors());
@@ -13,6 +14,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Welcome to the Course CRUD App!");
 });
+
+app.use("/course", courseRouter);
 
 //404 handler
 app.use((req, res, next) => {
