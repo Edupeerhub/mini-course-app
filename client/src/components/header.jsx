@@ -14,7 +14,12 @@ function Header() {
                 >
                     Register
                 </button>
-                <button className="w-20 text-white m-4 p-2 bg-green-600 rounded-lg text-sm">Login</button>
+                <button 
+                    className="w-20 text-white m-4 p-2 bg-green-600 rounded-lg text-sm"
+                    onClick={() => navigate('/login')}
+                >
+                    Login
+                </button>
             </div>
         </>
     )

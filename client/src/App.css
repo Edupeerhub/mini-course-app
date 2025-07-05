@@ -5,8 +5,9 @@ body {
 }
 
 input {
-    border: 1px solid black;
     display: block;
     width: 430px;
     padding: 8px;
+    background-color: rgb(107, 190, 196);
 }
+
