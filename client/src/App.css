@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+body {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+input {
+    border: 1px solid black;
+    display: block;
+    width: 430px;
+    padding: 8px;
+}

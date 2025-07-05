@@ -1,8 +1,12 @@
 import "./App.css";
+import React from "react";
+import Header from "./components/header";
 
 function App() {
   return (
-    <h1 className="text-3xl font-bold underline">Welcome to the course app</h1>
+    <>
+      <Header />
+    </>
   );
 }
 
