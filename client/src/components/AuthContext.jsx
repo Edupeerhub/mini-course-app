@@ -94,7 +94,6 @@ export function AuthContextProvider({ children }) {
   const contextValue = {
     userInfo,
     token,
-    // fetchWithAuth,
     signUp,
     login,
     logout,

@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AddCourseButton from "../components/AddCourseButton";
 
 import Modal from "../hooks/useModal";
 import { courseAPI } from "../services/courseAPI";
+import { AuthContext } from "../components/AuthContext";
 
 const Courses = () => {
+  // const { token } = useContext(AuthContext);
+  const token = "test-token";
+
   // This will be replaced with API calls later
   const [courses, setCourses] = useState([
     {
@@ -80,12 +84,13 @@ const Courses = () => {
       setLoading(true);
 
       if (modalType === "add") {
-        const newCourse = await courseAPI.addCourse(formData);
+        const newCourse = await courseAPI.addCourse(formData, token);
         // setCourses((prev) => [...prev, newCourse]);
       } else if (modalType === "edit") {
         const updatedCourse = await courseAPI.updateCourse(
           selectedCourse.id,
-          formData
+          formData,
+          token
         );
         // setCourses((prev) =>
         //   prev.map((course) =>
@@ -110,7 +115,7 @@ const Courses = () => {
     if (window.confirm("Are you sure you want to delete this course?")) {
       try {
         setLoading(true);
-        await courseAPI.deleteCourse(courseId);
+        await courseAPI.deleteCourse(courseId, token);
         // setCourses((prev) => prev.filter((course) => course.id !== courseId));
         setError(null);
       } catch (err) {
@@ -242,11 +247,19 @@ const Courses = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
+      if (!token) return;
+
       try {
         setLoading(true);
-        const coursesData = await courseAPI.getAllCourses();
-        setCourses(coursesData);
-        setError(null);
+        const result = await courseAPI.getAllCourses(token);
+
+        if (result.success && Array.isArray(result.message)) {
+          setCourses(result.message);
+        } else {
+          setCourses([]);
+          console.warn("Courses fetch failed or returned invalid data", result);
+          setError(result.message);
+        }
       } catch (err) {
         setError("Failed to load courses");
         console.error(err);
@@ -256,7 +269,7 @@ const Courses = () => {
     };
 
     fetchCourses();
-  }, []);
+  }, [token]);
 
   return (
     <>
@@ -265,6 +278,11 @@ const Courses = () => {
           Courses List
         </h2>
         <AddCourseButton onAddCourse={() => openModal("add")} />
+        {error && (
+          <div className="error" style={{ color: "red", marginBottom: "10px" }}>
+            {error}
+          </div>
+        )}
 
         {loading ? (
           <div className="bg-white rounded-lg shadow-lg h-[20vh] flex items-center justify-center w-[full]">
@@ -273,7 +291,7 @@ const Courses = () => {
               <p className="text-gray-600">Loading courses...</p>
             </div>
           </div>
-        ) : courses.length > 0 ? (
+        ) : Array.isArray(courses) && courses.length > 0 ? (
           <div className="bg-white rounded-lg shadow-lg overflow-auto max-h-[70vh]">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -330,7 +348,7 @@ const Courses = () => {
             </table>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-lg h-[70vh] flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg h-[20vh] flex items-center justify-center w-[full]">
             <p className="text-gray-600">
               No Course found. Add to view your courses.
             </p>

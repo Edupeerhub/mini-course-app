@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../components/AuthContext";
 
 export default function Home() {
+  const { userInfo } = useContext(AuthContext);
+
+  const username = userInfo?.first_name;
   return (
     <div className="flex flex-col justify-center items-center text-center max-w-2xl">
       <h1 className="text-4xl font-bold mb-4">Welcome to CourseHub!</h1>
@@ -10,12 +15,14 @@ export default function Home() {
       </p>
 
       <div className="flex gap-4">
-        {/* <Link
-          to="/courses"
-          className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        >
-          Browse Courses
-        </Link> */}
+        {username && (
+          <Link
+            to="/courses"
+            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          >
+            Browse Courses
+          </Link>
+        )}
         <Link
           to="/signup"
           className="px-6 py-3 bg-gray-200 text-blue-700 rounded hover:bg-blue-300 transition"
