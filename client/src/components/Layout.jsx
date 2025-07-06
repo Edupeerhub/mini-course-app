@@ -10,7 +10,7 @@ export default function Layout() {
       <Header />
 
       {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center px-4 py-1">
+      <main className="flex-grow flex items-center justify-center px-4 py-4 overflow-auto">
         <Outlet />
       </main>
 
