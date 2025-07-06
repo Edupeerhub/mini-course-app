@@ -1,11 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/AuthContext";
 
 export default function SignUp() {
-  const navigate = useNavigate();
+  const { signUp } = useContext(AuthContext);
+
+  const [error, setError] = useState("");
+  const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
   });
@@ -17,16 +23,24 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    // Just log for now
-    console.log("User signed up:", formData);
+    const result = await signUp(formData);
 
-    // Redirect to login or courses page
-    navigate("/login");
-  };
+    if (result.success === true) {
+      setRedirect(true);
+    } else {
+      setError(result.message || "Wrong credentials");
+    }
+    setLoading(false);
+  }
 
+  if (redirect) {
+    return <Navigate to="/courses" replace />;
+  }
   return (
     <div className="flex flex-row items-center min-h-full py-2">
       {/* Left Panel */}
@@ -44,7 +58,14 @@ export default function SignUp() {
           <h2 className="text-2xl font-bold text-center mb-2">
             Create an Account
           </h2>
-
+          {error && (
+            <div
+              className="error"
+              style={{ color: "red", marginBottom: "10px" }}
+            >
+              {error}
+            </div>
+          )}
           <form
             onSubmit={handleSubmit}
             className="flex flex-col justify-evenly"
@@ -117,8 +138,9 @@ export default function SignUp() {
             <button
               type="submit"
               className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Signing up..." : "Sign Up"}
             </button>
           </form>
         </div>

@@ -1,24 +1,51 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../components/AuthContext";
+import { useLocation } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { login, userInfo, isLoading } = useContext(AuthContext);
+
+  const location = useLocation();
+
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+
+  if (userInfo) {
+    const from = location.state?.from?.pathname || "/";
+    return <Navigate to={from} replace />;
+  }
+
+  async function handleLogin(e) {
     e.preventDefault();
+    setLoading(true);
+    setError("");
 
     if (!email || !password) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Replace this with real auth logic later
-    alert(`Logged in as ${email}`);
+    const result = await login(email, password);
 
-    // Reset fields (optional)
-    setEmail("");
-    setPassword("");
-  };
+    if (result.success === true) {
+      setRedirect(true);
+    } else {
+      setError(result.message || "Wrong credentials");
+    }
+
+    setLoading(false);
+  }
+  if (redirect) {
+    const from = location.state?.from?.pathname || "/";
+    return <Navigate to={from} replace />;
+  }
 
   return (
     <div className="flex min-h-full ">
@@ -42,6 +69,15 @@ export default function Login() {
         >
           <h2 className="text-2xl font-bold mb-2 text-center">Login</h2>
 
+          {error && (
+            <div
+              className="error"
+              style={{ color: "red", marginBottom: "10px" }}
+            >
+              {error}
+            </div>
+          )}
+
           <label className="block mb-1 text-sm font-medium">Email:</label>
           <input
             type="email"
@@ -63,8 +99,9 @@ export default function Login() {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

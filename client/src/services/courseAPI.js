@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://localhost:3000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const courseAPI = {
   // Get all courses
@@ -35,7 +35,7 @@ export const courseAPI = {
   updateCourse: async (id, courseData) => {
     try {
       const response = await fetch(`${API_BASE_URL}/course/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },

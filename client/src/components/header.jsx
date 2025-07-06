@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { userInfo, logout } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    await logout();
+  };
+  const username = userInfo?.first_name;
 
   return (
     <>
@@ -16,44 +22,35 @@ const Header = () => {
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex space-x-6 items-center text-gray-700">
-            <Link to="/courses" className="hover:text-blue-600">
-              Courses
-            </Link>
-            <Link to="/login" className="hover:text-blue-600">
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700"
-            >
-              Sign Up
-            </Link>
-            <Link to="/about" className="text-blue-700 hover:underline">
-              About
-            </Link>
+            {/* {username && ( */}
+            <>
+              <Link to="/courses" className="hover:text-blue-600">
+                View Your Courses
+              </Link>
+              <a
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-1.5 rounded hover:bg-red-700"
+              >
+                Sign Out ({username})
+              </a>
+            </>
+            {/* )} */}
+
+            {!username && (
+              <>
+                <Link to="/login" className="hover:text-blue-600">
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </nav>
         </div>
-
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div className="md:hidden px-4 pb-4 space-y-2 text-gray-700">
-            <Link to="/courses" className="block hover:text-blue-600">
-              Courses
-            </Link>
-            <Link to="/login" className="block hover:text-blue-600">
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="block bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700"
-            >
-              Sign Up
-            </Link>
-            <Link to="/about" className="text-blue-700 hover:underline">
-              About
-            </Link>
-          </div>
-        )}
       </header>
     </>
   );
