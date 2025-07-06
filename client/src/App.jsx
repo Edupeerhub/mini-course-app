@@ -1,19 +1,22 @@
 // src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import Home from './pages/Home';
-import Courses from './pages/Courses';
-import CourseDetails from './pages/courseDetails';
-import About from './pages/About';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-
+import "./App.css";
+import React from "react";
+import Header from "./components/header";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Courses from "./pages/Courses";
+import CourseDetails from "./pages/courseDetails";
+import About from "./pages/About";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Layout />}> 
+        <Header />
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="courses" element={<Courses />} />
           <Route path="courses/:id" element={<CourseDetails />} />
@@ -27,4 +30,3 @@ function App() {
 }
 
 export default App;
-
