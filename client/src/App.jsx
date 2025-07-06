@@ -1,7 +1,7 @@
 // src/App.jsx
 import "./App.css";
 import React from "react";
-import Header from "./components/header";
+import Header from "./components/Header";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
@@ -13,19 +13,21 @@ import Signup from "./pages/Signup";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Header />
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="courses" element={<Courses />} />
-          <Route path="courses/:id" element={<CourseDetails />} />
-          <Route path="about" element={<About />} />
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<Signup />} />
-        </Route>
-      </Routes>
-    </Router>
+    <>
+      {/* <Header /> */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="courses/:id" element={<CourseDetails />} />
+            <Route path="about" element={<About />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
+          </Route>
+        </Routes>
+      </Router>
+    </>
   );
 }
 
