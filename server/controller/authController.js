@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
-const User = require("../models/User"); 
+const User = require("../models/user"); 
 
 
 // Validation schemas
@@ -60,10 +60,13 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    await newUser.save();
-
     // Generate token
     const token = generateToken(newUser._id);
+
+    
+    // Save user to database
+    await newUser.save();
+
 
     // Return success response (exclude password)
     res.status(201).json({
@@ -73,9 +76,9 @@ const register = async (req, res) => {
         user: {
           id: newUser._id,
           first_name: newUser.first_name,
-          last_name: newUser.last_name,
+          // last_name: newUser.last_name,
           email: newUser.email,
-          createdAt: newUser.createdAt,
+          // createdAt: newUser.createdAt,
         },
         token,
       },
@@ -134,9 +137,9 @@ const login = async (req, res) => {
         user: {
           id: user._id,
           first_name: user.first_name,
-          last_name: user.last_name,
+          // last_name: user.last_name,
           email: user.email,
-          createdAt: user.createdAt,
+          // createdAt: user.createdAt,
         },
         token,
       },
@@ -168,10 +171,10 @@ const getCurrentUser = async (req, res) => {
         user: {
           id: user._id,
           first_name: user.first_name,
-          last_name: user.last_name,
+          // last_name: user.last_name,
           email: user.email,
           createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
+          // updatedAt: user.updatedAt,
         },
       },
     });
