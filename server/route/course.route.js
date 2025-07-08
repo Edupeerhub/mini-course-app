@@ -7,7 +7,7 @@ const {courseValidation} = require("../middleware/course.middleware");
 router.get("/", courseController.getAllCourses);
 router.get("/:id", courseController.getOneCourse);
 router.post("/", courseValidation, courseController.createCourse);
-router.patch("/:id", courseValidation, courseController.updateCourse);
+router.put("/:id", courseValidation, courseController.updateCourse);
 router.delete("/:id", courseController.deleteCourse);
 
 module.exports = router;
