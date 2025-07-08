@@ -11,7 +11,12 @@ export const fetchWithAuth = async (url, token, options = {}) => {
     });
 
     if (response.ok) {
-      const data = await response.json();
+      const contentType = response.headers.get("content-type") || "";
+
+      const data = contentType.includes("application/json")
+        ? await response.json()
+        : null;
+
       return { success: true, message: data };
     } else {
       // Try to parse error response

@@ -19,7 +19,6 @@ app.use(express.json(), (error, req, res, next) => {
 const authRoutes = require("./route/authenticate");
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/course", courseRouter);
 
 //404 handler

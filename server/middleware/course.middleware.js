@@ -3,13 +3,11 @@ const joi = require("joi");
 function courseValidation(req, res, next) {
   const schema = joi.object({
     title: joi.string().required(),
-    courseCode: joi
-      .string()
-      .required()
-      .pattern(/^[A-Z]{3}[0-9]{3}$/),
+    courseCode: joi.string().required(),
+    // .pattern(/^[A-Z]{3}[0-9]{3}$/),
     description: joi.string().required(),
-    credits: joi.number().required().max(4).min(1),
-    department: joi.string().required(),
+    // credits: joi.number().required().max(4).min(1),
+    // department: joi.string().required(),
   });
 
   const { error } = schema.validate(req.body);

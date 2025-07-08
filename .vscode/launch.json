@@ -2,36 +2,45 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Chrome",
+      "name": "Launch Server via Npm",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "dev"],
+      "runtimeExecutable": "npm",
+      "cwd": "${workspaceFolder}/server",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "type": "node"
+    },
+    {
+      "name": "Launch Client & Server via Npm",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "dev"],
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal",
+      "type": "node"
+    },
+    {
+      "name": "Launch Client via Chrome",
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}/client"
-    },
-    {
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "name": "nodemon",
-      "program": "${workspaceFolder}/server/server.js",
-      "request": "launch",
-      "restart": true,
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "runtimeExecutable": "nodemon",
       "skipFiles": ["<node_internals>/**"],
-      "type": "node"
+      "webRoot": "${workspaceFolder}/client"
     }
     // {
-    //   "type": "chrome",
+    //   "console": "integratedTerminal",
+    //   "internalConsoleOptions": "neverOpen",
+    //   "name": "nodemon",
+    //   "program": "${workspaceFolder}/server/server.js",
     //   "request": "launch",
-    //   "name": "Launch Chrome against localhost",
-    //   "url": "http://localhost:5173",
-    //   "webRoot": "${workspaceFolder}/src",
-    //   "sourceMaps": true,
-    //   "trace": true,
+    //   "restart": true,
+    //   "env": {
+    //     "NODE_ENV": "development"
+    //   },
+    //   "runtimeExecutable": "nodemon",
     //   "skipFiles": ["<node_internals>/**"],
-    //   "runtimeArgs": ["--remote-debugging-port=9222"]
+    //   "type": "node"
     // }
   ]
 }
