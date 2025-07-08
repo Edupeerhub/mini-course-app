@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,15 +12,6 @@ export default function Login() {
   const { login, userInfo, isLoading } = useContext(AuthContext);
 
   const location = useLocation();
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  if (userInfo) {
-    const from = location.state?.from?.pathname || "/";
-    return <Navigate to={from} replace />;
-  }
 
   async function handleLogin(e) {
     e.preventDefault();

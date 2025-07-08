@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 const Header = () => {
-  const { userInfo, logout } = useContext(AuthContext);
+  const { userInfo, logout, isLoading } = useContext(AuthContext);
 
   const handleLogout = async () => {
     await logout();
@@ -22,19 +22,19 @@ const Header = () => {
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex space-x-6 items-center text-gray-700">
-            {/* {username && ( */}
-            <>
-              <Link to="/courses" className="hover:text-blue-600">
-                View Your Courses
-              </Link>
-              <a
-                onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-1.5 rounded hover:bg-red-700"
-              >
-                Sign Out ({username})
-              </a>
-            </>
-            {/* )} */}
+            {username && (
+              <>
+                <Link to="/courses" className="hover:text-blue-600">
+                  View Your Courses
+                </Link>
+                <a
+                  onClick={handleLogout}
+                  className="bg-red-600 text-white px-4 py-1.5 rounded hover:bg-red-700"
+                >
+                  Sign Out ({username})
+                </a>
+              </>
+            )}
 
             {!username && (
               <>

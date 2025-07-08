@@ -20,8 +20,8 @@ export function AuthContextProvider({ children }) {
     try {
       const signUpResponse = await authAPI.register(formData);
 
-      const token = signUpResponse.token;
-      const user = signUpResponse.user;
+      const token = signUpResponse.data.token;
+      const user = signUpResponse.data.user;
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
@@ -29,13 +29,10 @@ export function AuthContextProvider({ children }) {
       setToken(token);
       return { success: true };
     } catch (error) {
-      const errorData = await signUpResponse.catch(() => ({}));
-      console.error(
-        `Registration failed: ${errorData}, error from api: ${error}`
-      );
+      console.error("Registration failed:", error.message);
       return {
         success: false,
-        message: errorData.error || "Registration failed",
+        message: error.message || "Registration failed",
       };
     } finally {
       setIsLoading(false);
@@ -46,8 +43,8 @@ export function AuthContextProvider({ children }) {
     try {
       const loginResponse = await authAPI.login({ email, password });
 
-      const token = loginResponse.token;
-      const user = loginResponse.user;
+      const token = loginResponse.data.token;
+      const user = loginResponse.data.user;
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
@@ -55,11 +52,10 @@ export function AuthContextProvider({ children }) {
       setToken(token);
       return { success: true };
     } catch (error) {
-      const errorData = await loginResponse.catch(() => ({}));
-      console.error(`Login failed: ${errorData}, error from api: ${error}`);
+      console.error("Login failed:", error.message);
       return {
         success: false,
-        message: errorData.error || "Login failed",
+        message: error.message || "Login failed",
       };
     } finally {
       setIsLoading(false);
@@ -72,24 +68,44 @@ export function AuthContextProvider({ children }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    // const storedUser = localStorage.getItem("user");
-
+    console.log("AuthContext init:", { storedToken, userInfo, token });
     if (storedToken) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp * 1000 > Date.now()) {
-          setUserInfo(decoded);
-        } else {
-          clearAuth();
-        }
-      } catch (error) {
-        console.error("Auth initialization error:", error);
-        clearAuth();
-      } finally {
-        setIsLoading(false);
-      }
+      authAPI
+        .getCurrentUser(storedToken)
+        .then((response) => {
+          setToken(storedToken);
+          setUserInfo(response.data.user);
+        })
+        .catch((err) => {
+          console.error("Auth failed:", err);
+          clearAuth(); // reset token + user
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
     }
+    // if (storedToken) {
+    //   try {
+    //     const decoded = jwtDecode(storedToken);
+    //     if (decoded.exp * 1000 > Date.now()) {
+    //       setToken(storedToken);
+    //       setUserInfo(decoded);
+    //     } else {
+    //       clearAuth();
+    //     }
+    //   } catch (error) {
+    //     console.error("Auth initialization error:", error);
+    //     clearAuth();
+    //   }
+    // }
+    // setIsLoading(false);
   }, []);
+  useEffect(() => {
+    console.warn("Token updated:", token);
+    console.warn("user updated:", userInfo);
+  }, [token]);
 
   const contextValue = {
     userInfo,

@@ -5,6 +5,8 @@ import { AuthContext } from "./AuthContext";
 export default function PrivateRoute({ children }) {
   const { userInfo, token, isLoading } = useContext(AuthContext);
 
+  console.log("PrivateRoute: ", { token, userInfo, isLoading });
+
   // Don't render anything until auth is initialized
   if (isLoading) {
     return <div>Loading...</div>;
