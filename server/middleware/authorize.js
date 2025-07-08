@@ -19,7 +19,7 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if user still exists
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -28,7 +28,7 @@ const authenticateToken = async (req, res, next) => {
     }
 
     // Add user info to request
-    req.user = decoded;
+    req.user = user;
     next();
   } catch (error) {
     console.error("Token verification error:", error);
@@ -63,12 +63,12 @@ const optionalAuth = async (req, res, next) => {
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findById(decoded.userId);
-      
+
       if (user) {
         req.user = decoded;
       }
     }
-    
+
     next();
   } catch (error) {
     // Continue without authentication

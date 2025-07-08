@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthContextProvider } from "./components/AuthContext";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
   return (
@@ -22,14 +23,28 @@ function App() {
               <Route
                 path="courses"
                 element={
-                  // <PrivateRoute>
-                  // </PrivateRoute>
-                  <Courses />
+                  <PrivateRoute>
+                    <Courses />
+                  </PrivateRoute>
                 }
               />
               <Route path="about" element={<About />} />
-              <Route path="login" element={<Login />} />
-              <Route path="signup" element={<Signup />} />
+              <Route
+                path="login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="signup"
+                element={
+                  <PublicRoute>
+                    <Signup />
+                  </PublicRoute>
+                }
+              />
             </Route>
           </Routes>
         </Router>

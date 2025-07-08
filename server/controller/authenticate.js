@@ -1,8 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
-const User = require("../models/user"); 
-
+const User = require("../models/user");
 
 // Validation schemas
 const registerSchema = Joi.object({
@@ -18,8 +17,8 @@ const loginSchema = Joi.object({
 });
 
 // Generate JWT token
-const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+const generateToken = (id, first_name) => {
+  return jwt.sign({ id, first_name }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
@@ -61,12 +60,10 @@ const register = async (req, res) => {
     });
 
     // Generate token
-    const token = generateToken(newUser._id);
+    const token = generateToken(newUser._id, newUser.first_name);
 
-    
     // Save user to database
     await newUser.save();
-
 
     // Return success response (exclude password)
     res.status(201).json({
@@ -127,7 +124,7 @@ const login = async (req, res) => {
     }
 
     // Generate token
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.first_name);
 
     // Return success response (exclude password)
     res.status(200).json({
@@ -157,7 +154,7 @@ const login = async (req, res) => {
 // Get current user (protected route)
 const getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({
         success: false,

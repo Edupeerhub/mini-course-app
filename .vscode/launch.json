@@ -1,0 +1,37 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/client"
+    },
+    {
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "name": "nodemon",
+      "program": "${workspaceFolder}/server/server.js",
+      "request": "launch",
+      "restart": true,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "runtimeExecutable": "nodemon",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node"
+    }
+    // {
+    //   "type": "chrome",
+    //   "request": "launch",
+    //   "name": "Launch Chrome against localhost",
+    //   "url": "http://localhost:5173",
+    //   "webRoot": "${workspaceFolder}/src",
+    //   "sourceMaps": true,
+    //   "trace": true,
+    //   "skipFiles": ["<node_internals>/**"],
+    //   "runtimeArgs": ["--remote-debugging-port=9222"]
+    // }
+  ]
+}
