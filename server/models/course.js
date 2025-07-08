@@ -17,15 +17,15 @@ const courseSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    credits: {
-      type: Number,
-      required: true,
-    },
+    // credits: {
+    //   type: Number,
+    //   required: true,
+    // },
 
-    department: {
-      type: String,
-      required: true,
-    },
+    // department: {
+    //   type: String,
+    //   required: true,
+    // },
   },
   {
     timestamps: true,
