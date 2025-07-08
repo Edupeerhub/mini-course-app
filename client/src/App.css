@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+/* html,
+body {
+  overflow: hidden;
+} */
+
+body {
+  font-family:
+    "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+    Arial, sans-serif;
+}
+
+input {
+  display: block;
+  padding: 8px;
+  background-color: rgb(107, 190, 196);
+}
+
+a {
+  cursor: pointer;
+}
