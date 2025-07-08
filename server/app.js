@@ -16,9 +16,9 @@ app.use(express.json(), (error, req, res, next) => {
   res.status(400).send("Bad Request: Invalid Json");
 });
 
-app.get("/", (req, res) => {
-  res.send("Welcome to the Course CRUD App!");
-});
+const authRoutes = require("./route/authenticate");
+
+app.use("/api/auth", authRoutes);
 
 app.use("/api/course", courseRouter);
 
