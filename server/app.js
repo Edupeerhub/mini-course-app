@@ -10,6 +10,10 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+const authRoutes = require("./route/auth");
+
+app.use("/api/auth", authRoutes);
+
 app.get("/", (req, res) => {
   res.send("Welcome to the Course CRUD App!");
 });
