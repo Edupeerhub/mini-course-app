@@ -1,4 +1,7 @@
-require("dotenv").config();
+const NODE_ENV = process.env.NODE_ENV || "development";
+const path = require("path");
+require("dotenv").config({ path: path.normalize(`./.env.${NODE_ENV}`) });
+
 const express = require("express");
 const cors = require("cors");
 const logger = require("morgan");
@@ -10,13 +13,9 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const authRoutes = require("./route/auth");
+const authRoutes = require("./route/authenticate");
 
 app.use("/api/auth", authRoutes);
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the Course CRUD App!");
-});
 
 //404 handler
 app.use((req, res, next) => {
