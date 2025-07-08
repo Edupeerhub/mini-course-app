@@ -38,7 +38,7 @@ async function getAllCourses(req, res) {
     const courses = await courseService.getAllCourses();
     res.status(200).send({
       message: "Courses retrieved successfully",
-      courses: courses,
+      course: courses,
     });
   } catch (error) {
     console.error(`Encountered error: ${error}`);

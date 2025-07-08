@@ -17,7 +17,7 @@ export const fetchWithAuth = async (url, token, options = {}) => {
         ? await response.json()
         : null;
 
-      return { success: true, message: data };
+      return { success: true, message: data.course };
     } else {
       // Try to parse error response
       const errorData = await response.json().catch(() => null);

@@ -23,12 +23,14 @@ export default function Home() {
             Browse Courses
           </Link>
         )}
-        <Link
-          to="/signup"
-          className="px-6 py-3 bg-gray-200 text-blue-700 rounded hover:bg-blue-300 transition"
-        >
-          Get Started
-        </Link>
+        {!username && (
+          <Link
+            to="/signup"
+            className="px-6 py-3 bg-gray-200 text-blue-700 rounded hover:bg-blue-300 transition"
+          >
+            Get Started
+          </Link>
+        )}
       </div>
     </div>
   );
