@@ -6,7 +6,6 @@ const {authenticateToken} = require("../middleware/authorize");
 router.use(authenticateToken); 
 router.get("/", courseController.getAllCourses);
 router.get("/:id", courseController.getOneCourse);
-router.post("/register/:id", courseController.registerUser);
 router.post("/", courseValidation, courseController.createCourse);
 router.put("/:id", courseValidation, courseController.updateCourse);
 router.delete("/:id", courseController.deleteCourse);
