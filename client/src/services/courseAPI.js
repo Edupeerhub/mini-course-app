@@ -7,11 +7,11 @@ const API_BASE_URL =
 
 export const courseAPI = {
   getAllCourses: async (token) => {
-    return await fetchWithAuth(`${API_BASE_URL}/course`, token);
+    return await fetchWithAuth(`/api/course`, token);
   },
 
   addCourse: async (courseData, token) => {
-    return await fetchWithAuth(`${API_BASE_URL}/course`, token, {
+    return await fetchWithAuth(`/api/course`, token, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(courseData),
@@ -19,7 +19,7 @@ export const courseAPI = {
   },
 
   updateCourse: async (id, courseData, token) => {
-    return await fetchWithAuth(`${API_BASE_URL}/course/${id}`, token, {
+    return await fetchWithAuth(`/api/course/${id}`, token, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(courseData),
@@ -27,7 +27,7 @@ export const courseAPI = {
   },
 
   deleteCourse: async (id, token) => {
-    return await fetchWithAuth(`${API_BASE_URL}/course/${id}`, token, {
+    return await fetchWithAuth(`/api/course/${id}`, token, {
       method: "DELETE",
     });
   },

@@ -6,7 +6,7 @@ const API_BASE_URL =
 export const authAPI = {
   login: async (loginData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`/api/auth/login`, {
         method: "POST",
         body: JSON.stringify(loginData),
         headers: { "Content-Type": "application/json" },
@@ -27,7 +27,7 @@ export const authAPI = {
 
   register: async (registerData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      const response = await fetch(`/api/auth/register`, {
         method: "POST",
         body: JSON.stringify(registerData),
         headers: { "Content-Type": "application/json" },
@@ -45,7 +45,7 @@ export const authAPI = {
   },
   getCurrentUser: async (token) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      const response = await fetch(`/api/auth/me`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
