@@ -27,18 +27,18 @@ export const fetchWithAuth = async (url, token, options = {}) => {
         `${response.status} ${response.statusText}` ||
         "Request failed";
 
-      console.error("API Error:", {
-        url,
-        status: response.status,
-        statusText: response.statusText,
-        errorMessage,
-      });
+      // console.error("API Error:", {
+      //   url,
+      //   status: response.status,
+      //   statusText: response.statusText,
+      //   errorMessage,
+      // });
 
       return { success: false, message: errorMessage };
     }
   } catch (error) {
     // Usually a network failure or CORS issue
-    console.error("Network or unexpected fetch error:", error);
+    // console.error("Network or unexpected fetch error:", error);
     return {
       success: false,
       message: error.message || "Network error. Please try again.",

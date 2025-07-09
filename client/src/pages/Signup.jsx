@@ -48,7 +48,7 @@ export default function SignUp() {
         <img
           className="w-full h-full rounded shadow scale-90"
           style={{ objectPosition: "50% 22%" }}
-          src="/books-ladder.jpg"
+          src="/books-ladder.webp"
           alt=""
         />
       </div>

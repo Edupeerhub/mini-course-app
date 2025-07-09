@@ -92,7 +92,7 @@ const Courses = () => {
       setError(
         modalType === "add" ? "Failed to add course" : "Failed to update course"
       );
-      console.error(err);
+      // console.error(err);
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ const Courses = () => {
         setError(null);
       } catch (err) {
         setError("Failed to delete course");
-        console.error(err);
+        // console.error(err);
       } finally {
         setLoading(false);
       }
@@ -249,7 +249,7 @@ const Courses = () => {
         }
       } catch (err) {
         setError("Failed to load courses");
-        console.error(err);
+        // console.error(err);
       } finally {
         setLoading(false);
       }

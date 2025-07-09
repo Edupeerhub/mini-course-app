@@ -44,7 +44,7 @@ export default function Login() {
       <div className="w-[600px] flex flex-col justify-center items-center p-1">
         <img
           className="w-full max-h-[60vh] object-contain mb-4"
-          src="/books.png"
+          src="/books.webp"
           alt="Books"
         />
         <h1 className="text-2xl font-bold text-center">
