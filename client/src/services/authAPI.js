@@ -17,7 +17,7 @@ export const authAPI = {
         throw new Error(responseData.error || "Failed to login");
       }
     } catch (error) {
-      console.error("Login API error:", error);
+      // console.error("Login API error:", error);
       throw error;
     }
   },
@@ -36,7 +36,7 @@ export const authAPI = {
         throw new Error(responseData.error || "Failed to register");
       }
     } catch (error) {
-      console.error("Register API error:", error);
+      // console.error("Register API error:", error);
       throw error;
     }
   },
@@ -58,7 +58,7 @@ export const authAPI = {
         throw new Error(responseData.error || "Failed to fetch user");
       }
     } catch (error) {
-      console.error("Get current user API error:", error);
+      // console.error("Get current user API error:", error);
       throw error;
     }
   },

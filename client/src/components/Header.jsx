@@ -22,7 +22,7 @@ const Header = () => {
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex space-x-6 items-center text-gray-700">
-            {username && (
+            {isLoading ? null : username ? (
               <>
                 <Link to="/courses" className="hover:text-blue-600">
                   View Your Courses
@@ -34,9 +34,7 @@ const Header = () => {
                   Sign Out ({username})
                 </a>
               </>
-            )}
-
-            {!username && (
+            ) : (
               <>
                 <Link to="/login" className="hover:text-blue-600">
                   Login

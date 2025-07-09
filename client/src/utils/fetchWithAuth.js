@@ -11,8 +11,13 @@ export const fetchWithAuth = async (url, token, options = {}) => {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      return { success: true, message: data };
+      const contentType = response.headers.get("content-type") || "";
+
+      const data = contentType.includes("application/json")
+        ? await response.json()
+        : null;
+
+      return { success: true, message: data.course };
     } else {
       // Try to parse error response
       const errorData = await response.json().catch(() => null);
@@ -22,18 +27,18 @@ export const fetchWithAuth = async (url, token, options = {}) => {
         `${response.status} ${response.statusText}` ||
         "Request failed";
 
-      console.error("API Error:", {
-        url,
-        status: response.status,
-        statusText: response.statusText,
-        errorMessage,
-      });
+      // console.error("API Error:", {
+      //   url,
+      //   status: response.status,
+      //   statusText: response.statusText,
+      //   errorMessage,
+      // });
 
       return { success: false, message: errorMessage };
     }
   } catch (error) {
     // Usually a network failure or CORS issue
-    console.error("Network or unexpected fetch error:", error);
+    // console.error("Network or unexpected fetch error:", error);
     return {
       success: false,
       message: error.message || "Network error. Please try again.",

@@ -29,7 +29,7 @@ export function AuthContextProvider({ children }) {
       setToken(token);
       return { success: true };
     } catch (error) {
-      console.error("Registration failed:", error.message);
+      // console.error("Registration failed:", error.message);
       return {
         success: false,
         message: error.message || "Registration failed",
@@ -52,7 +52,7 @@ export function AuthContextProvider({ children }) {
       setToken(token);
       return { success: true };
     } catch (error) {
-      console.error("Login failed:", error.message);
+      // console.error("Login failed:", error.message);
       return {
         success: false,
         message: error.message || "Login failed",
@@ -68,7 +68,6 @@ export function AuthContextProvider({ children }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    console.log("AuthContext init:", { storedToken, userInfo, token });
     if (storedToken) {
       authAPI
         .getCurrentUser(storedToken)
@@ -77,7 +76,7 @@ export function AuthContextProvider({ children }) {
           setUserInfo(response.data.user);
         })
         .catch((err) => {
-          console.error("Auth failed:", err);
+          // console.error("Auth failed:", err);
           clearAuth(); // reset token + user
         })
         .finally(() => {
@@ -86,26 +85,7 @@ export function AuthContextProvider({ children }) {
     } else {
       setIsLoading(false);
     }
-    // if (storedToken) {
-    //   try {
-    //     const decoded = jwtDecode(storedToken);
-    //     if (decoded.exp * 1000 > Date.now()) {
-    //       setToken(storedToken);
-    //       setUserInfo(decoded);
-    //     } else {
-    //       clearAuth();
-    //     }
-    //   } catch (error) {
-    //     console.error("Auth initialization error:", error);
-    //     clearAuth();
-    //   }
-    // }
-    // setIsLoading(false);
   }, []);
-  useEffect(() => {
-    console.warn("Token updated:", token);
-    console.warn("user updated:", userInfo);
-  }, [token]);
 
   const contextValue = {
     userInfo,

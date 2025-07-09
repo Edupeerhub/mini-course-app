@@ -17,7 +17,7 @@ export const courseAPI = {
 
   updateCourse: async (id, courseData, token) => {
     return await fetchWithAuth(`${API_BASE_URL}/course/${id}`, token, {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(courseData),
     });

@@ -9,9 +9,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
+    "start:prod": "NODE_ENV=production node server.js", 
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "nodemon:prod": "NODE_ENV=production nodemon server.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

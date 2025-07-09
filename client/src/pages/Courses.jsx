@@ -6,36 +6,9 @@ import { courseAPI } from "../services/courseAPI";
 import { AuthContext } from "../components/AuthContext";
 
 const Courses = () => {
-  // const { token } = useContext(AuthContext);
-  const token = "test-token";
+  const { token } = useContext(AuthContext);
 
-  // This will be replaced with API calls later
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: "Introduction to Computer Science",
-      courseCode: "CS101",
-      description: "Basic programming concepts and algorithms",
-    },
-    {
-      id: 2,
-      title: "Data Structures",
-      courseCode: "CS201",
-      description: "Advanced data structures and their applications",
-    },
-    {
-      id: 3,
-      title: "Web Development",
-      courseCode: "WEB301",
-      description: "Frontend and backend web development",
-    },
-    {
-      id: 4,
-      title: "Database Systems",
-      courseCode: "DB401",
-      description: "Relational databases and SQL",
-    },
-  ]);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [modalType, setModalType] = useState(null);
@@ -84,19 +57,31 @@ const Courses = () => {
       setLoading(true);
 
       if (modalType === "add") {
-        const newCourse = await courseAPI.addCourse(formData, token);
-        // setCourses((prev) => [...prev, newCourse]);
+        const result = await courseAPI.addCourse(formData, token);
+
+        if (result.success && result.message) {
+          const newCourse = result.message;
+          setCourses((prevCourses) => [...prevCourses, newCourse]);
+        } else {
+          setError("Failed to add course");
+        }
       } else if (modalType === "edit") {
-        const updatedCourse = await courseAPI.updateCourse(
-          selectedCourse.id,
+        const result = await courseAPI.updateCourse(
+          selectedCourse._id,
           formData,
           token
         );
-        // setCourses((prev) =>
-        //   prev.map((course) =>
-        //     course.id === selectedCourse.id ? updatedCourse : course
-        //   )
-        // );
+        if (result.success && result.message) {
+          const updatedCourse = result.message;
+
+          setCourses((prevCourses) =>
+            prevCourses.map((course) =>
+              course._id === selectedCourse._id ? updatedCourse : course
+            )
+          );
+        } else {
+          setError("Failed to add course");
+        }
       }
 
       closeModal();
@@ -105,7 +90,7 @@ const Courses = () => {
       setError(
         modalType === "add" ? "Failed to add course" : "Failed to update course"
       );
-      console.error(err);
+      // console.error(err);
     } finally {
       setLoading(false);
     }
@@ -116,11 +101,11 @@ const Courses = () => {
       try {
         setLoading(true);
         await courseAPI.deleteCourse(courseId, token);
-        // setCourses((prev) => prev.filter((course) => course.id !== courseId));
+        setCourses((prev) => prev.filter((course) => course._id !== courseId));
         setError(null);
       } catch (err) {
         setError("Failed to delete course");
-        console.error(err);
+        // console.error(err);
       } finally {
         setLoading(false);
       }
@@ -262,7 +247,7 @@ const Courses = () => {
         }
       } catch (err) {
         setError("Failed to load courses");
-        console.error(err);
+        // console.error(err);
       } finally {
         setLoading(false);
       }
@@ -312,7 +297,7 @@ const Courses = () => {
               </thead>
               <tbody>
                 {courses.map((course) => (
-                  <tr key={course.id} className="border-b hover:bg-gray-50">
+                  <tr key={course._id} className="border-b hover:bg-gray-50">
                     <td className="px-6 py-4 text-gray-700">{course.title}</td>
                     <td className="px-6 py-4 text-gray-700">
                       {course.courseCode}
@@ -329,7 +314,7 @@ const Courses = () => {
                           Update
                         </button>
                         <button
-                          onClick={() => handleDelete(course.id)}
+                          onClick={() => handleDelete(course._id)}
                           className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm transition-colors"
                         >
                           Delete
