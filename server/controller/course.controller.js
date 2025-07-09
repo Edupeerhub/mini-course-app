@@ -2,9 +2,15 @@ const courseService = require("../services/course");
 
 async function createCourse(req, res) {
   try {
-    req.body.userId = req.user._id;
-    console.log(req.body);
-    const createdCourse = await courseService.createCourse(req.body);
+    const { title, courseCode, description } = req.body;
+
+    const createdCourse = await courseService.createCourse({
+      title,
+      courseCode,
+      description,
+      userId: req.user._id,
+    });
+
     res.status(201).send({
       message: "Course created successfully",
       course: createdCourse,

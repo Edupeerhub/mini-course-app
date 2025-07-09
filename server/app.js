@@ -24,14 +24,26 @@ app.use(express.json(), (error, req, res, next) => {
   res.status(400).send("Bad Request: Invalid Json");
 });
 
+const distPath = path.resolve(__dirname, "../client/dist");
+
+app.use(express.static(distPath));
+
 const authRoutes = require("./route/authenticate");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/course", courseRouter);
 
 //404 handler
-app.use((req, res, next) => {
-  res.status(404).send("Not Found");
+// app.use((req, res, next) => {
+//   res.status(404).send("Not Found");
+// });
+
+app.use("/api/*", (req, res, next) => {
+  next(new Error(404, `Cannot ${req.method} ${req.originalUrl}`));
+});
+
+app.use("*", (req, res, next) => {
+  res.sendFile(path.resolve(distPath, "index.html"));
 });
 
 //Error handler

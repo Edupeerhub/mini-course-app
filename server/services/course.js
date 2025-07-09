@@ -15,9 +15,9 @@ exports.getOneCourse = async ({ courseId, userId }) => {
 };
 
 exports.updateCourse = async ({ courseId, updateData, userId }) => {
-  console.log({ courseId, updateData, userId });
-  return await Course.findOneAndReplace({ _id: courseId }, updateData, {
+  return await Course.findOneAndUpdate({ _id: courseId, userId }, updateData, {
     new: true,
+    runValidators: true,
   });
 };
 
