@@ -1,7 +1,9 @@
 const app = require("./app");
 const db = require("./config/database");
 
-const PORT = process.env.SERVER_PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+const PORT = NODE_ENV === "development" ? 3000 : process.env.SERVER_PORT;
 
 db.connectToMongoDB()
   .then(() => {
