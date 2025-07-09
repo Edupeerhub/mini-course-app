@@ -6,10 +6,8 @@ import { courseAPI } from "../services/courseAPI";
 import { AuthContext } from "../components/AuthContext";
 
 const Courses = () => {
-  // const { token } = useContext(AuthContext);
-  const token = "test-token";
+  const { token } = useContext(AuthContext);
 
-  // This will be replaced with API calls later
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

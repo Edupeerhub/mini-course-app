@@ -4,12 +4,20 @@ require("dotenv").config({ path: path.normalize(`./.env.${NODE_ENV}`) });
 
 const express = require("express");
 const cors = require("cors");
-const logger = require("morgan");
+const morgan = require("morgan");
 const app = express();
 
 const courseRouter = require("./route/course.route");
 // Middleware
-app.use(logger("dev"));
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    morgan("combined", {
+      skip: (req) => req.url.includes("/login") || req.url.includes("/signup"),
+    })
+  );
+} else {
+  app.use(morgan("dev"));
+}
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json(), (error, req, res, next) => {

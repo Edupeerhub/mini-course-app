@@ -86,10 +86,6 @@ export function AuthContextProvider({ children }) {
       setIsLoading(false);
     }
   }, []);
-  useEffect(() => {
-    console.warn("Token updated:", token);
-    console.warn("user updated:", userInfo);
-  }, [token]);
 
   const contextValue = {
     userInfo,
