@@ -1,3 +1,4 @@
+const User = require("../models/user");
 const courseService = require("../services/course");
 
 async function createCourse(req, res) {
@@ -73,10 +74,24 @@ async function deleteCourse(req, res) {
   }
 }
 
+async function registerUser(req, res) {
+  try {
+    const userId = req.user._id;
+    const courseId = req.params.id;
+    console.log({ userId: userId, courseId: courseId });
+    await User.updateOne({ _id: userId }, { $push: { courses: courseId } });
+    res.status(200).send({ message: "Course registered successfully" });
+  } catch (error) {
+    console.error(`Encountered error: ${error}`);
+    res.status(500).send("Something went wrong");
+  }
+}
+
 module.exports = {
   createCourse,
   getOneCourse,
   getAllCourses,
   updateCourse,
   deleteCourse,
+  registerUser,
 };
