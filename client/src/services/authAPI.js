@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NODE_ENV === "production"
+  import.meta.env.NODE_ENV === "production"
     ? import.meta.env.VITE_API_URL || ""
     : ""; // Empty string in dev = relative paths
 
