@@ -5,18 +5,22 @@ exports.createCourse = async (courseData) => {
   return course;
 };
 
-exports.getAllCourses = async () => {
-  return await Course.find({});
+exports.getAllCourses = async (userId) => {
+  return await Course.find({ userId });
 };
 
-exports.getOneCourse = async (courseId) => {
-  return await Course.findById(courseId);
+exports.getOneCourse = async ({ courseId, userId }) => {
+  console.log("userId: ", userId);
+  return await Course.findOne({ _id: courseId, userId: userId });
 };
 
-exports.updateCourse = async (courseId, updateData) => {
-  return await Course.findByIdAndUpdate(courseId, updateData, { new: true });
+exports.updateCourse = async ({ courseId, updateData, userId }) => {
+  console.log({ courseId, updateData, userId });
+  return await Course.findOneAndReplace({ _id: courseId }, updateData, {
+    new: true,
+  });
 };
 
-exports.deleteCourse = async (courseId) => {
-  return await Course.findByIdAndDelete(courseId);
+exports.deleteCourse = async ({ courseId, userId }) => {
+  return await Course.findOneAndDelete({ _id: courseId, userId });
 };

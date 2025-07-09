@@ -2,6 +2,8 @@ const courseService = require("../services/course");
 
 async function createCourse(req, res) {
   try {
+    req.body.userId = req.user._id;
+    console.log(req.body);
     const createdCourse = await courseService.createCourse(req.body);
     res.status(201).send({
       message: "Course created successfully",
@@ -16,7 +18,10 @@ async function createCourse(req, res) {
 async function getOneCourse(req, res) {
   try {
     const courseId = req.params.id;
-    const course = await courseService.getOneCourse(courseId);
+    const course = await courseService.getOneCourse({
+      courseId,
+      userId: req.user._id,
+    });
     if (!course) {
       res.status(404).send({
         message: "Course not found",
@@ -35,7 +40,8 @@ async function getOneCourse(req, res) {
 
 async function getAllCourses(req, res) {
   try {
-    const courses = await courseService.getAllCourses();
+    const userId = req.user._id;
+    const courses = await courseService.getAllCourses(userId);
     res.status(200).send({
       message: "Courses retrieved successfully",
       course: courses,
@@ -49,7 +55,17 @@ async function getAllCourses(req, res) {
 async function updateCourse(req, res) {
   try {
     const courseId = req.params.id;
-    const updatedCourse = await courseService.updateCourse(courseId, req.body);
+    const updatedCourse = await courseService.updateCourse({
+      courseId: courseId,
+      updateData: req.body,
+      userId: req.user._id,
+    });
+    if (!updatedCourse) {
+      res.status(404).send({
+        message: "Course not found",
+      });
+      return;
+    }
     res.status(200).send({
       message: "Course updated successfully",
       course: updatedCourse,
@@ -63,7 +79,16 @@ async function updateCourse(req, res) {
 async function deleteCourse(req, res) {
   try {
     const courseId = req.params.id;
-    await courseService.deleteCourse(courseId);
+    const deleteCount = await courseService.deleteCourse({
+      courseId,
+      userId: req.user._id,
+    });
+    if (!deleteCount) {
+      res.status(404).send({
+        message: "Course not found",
+      });
+      return;
+    }
     res.status(200).send({
       message: "Course deleted successfully",
     });
