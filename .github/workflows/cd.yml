@@ -121,6 +121,7 @@ jobs:
             
             # Make script executable and run it
             chmod +x deploy.sh
+            ls
             ./deploy.sh
           
             
