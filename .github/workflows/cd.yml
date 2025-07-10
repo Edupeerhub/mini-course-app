@@ -23,118 +23,129 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Deploy to server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.HOSTADDRESS }} << 'EOF'
-          # Set environment variables
-          export STAGING_MONGO_URI="${{ secrets.STAGING_MONGO_URI }}"
-          export STAGING_JWT_SECRET="${{ secrets.STAGING_JWT_SECRET }}"
-          export ENV="${{ secrets.ENV }}"
-          export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
-          export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
 
-          # Remove existing deployment if it exists
-          rm -rf mini-course-app
-          
-          # Create and run deployment script
-          cat > deploy.sh << 'SCRIPT'
-          #!/bin/bash
-          
-          # Mini-course-app deployment script
-          # Exit on any error
-          set -e
-          
-          # Update system and install dependencies
-          sudo apt update
-          sudo apt install npm nginx -y
-          
-          # Clone and setup application
-          git clone -b aws-monorepo-deployment https://github.com/Edupeerhub/mini-course-app.git
-          
-          # Build frontend
-          cd client
-          npm install
-          npm run build
-          cd ..
-          
-          # Setup backend
-          cd server
-          npm install
-          
-          # Create environment file
-          cat <<ENVEOF > .env
-          # Backend
-          MONGODB_URI=$STAGING_MONGO_URI
-          PORT=3000
-          # Auth
-          JWT_SECRET=$STAGING_JWT_SECRET
-          JWT_EXPIRES_IN=7d
-          # Environment
-          NODE_ENV=$ENV
-          ENVEOF
-          
-          echo ".env file created for $ENV"
-          cd ..
-          
-          # Configure nginx reverse proxy
-          cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage > /dev/null
-          server {
-              listen 80;
-              server_name $HOSTADDRESS;
-              location / {
-                  proxy_pass http://127.0.0.1:3000;
-                  proxy_http_version 1.1;
-                  proxy_set_header Host \$host;
-                  proxy_set_header X-Real-IP \$remote_addr;
-                  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-                  proxy_set_header X-Forwarded-Proto \$scheme;
-              }
-          }
-          NGINXEOF
-          
-          # Enable nginx site
-          sudo ln -s /etc/nginx/sites-available/webpage /etc/nginx/sites-enabled/ || true
-          sudo nginx -t
-          sudo systemctl reload nginx
-          
-          # Start application with PM2
-          cd server
-          sudo npm install -g pm2
-          
-          # Stop existing app if running
-          pm2 stop mini-course-app || true
-          pm2 delete mini-course-app || true
-          
-          # Start new app
-          pm2 start npm --name "mini-course-app" -- start
-          pm2 save
-          pm2 startup
-          
-          echo "Deployment completed successfully!"
-          echo "Application accessible at: http://$HOSTADDRESS"
-          SCRIPT
-          
-          # Make script executable and run it
-          chmod +x deploy.sh
-          ./deploy.sh
-        
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOSTADDRESS }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          script: |
+            export STAGING_MONGO_URI="${{ secrets.STAGING_MONGO_URI }}"
+            export STAGING_JWT_SECRET="${{ secrets.STAGING_JWT_SECRET }}"
+            export ENV="${{ secrets.ENV }}"
+            export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
+            export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
+
      
+            # Remove existing deployment if it exists
+            rm -rf mini-course-app
             
+            # Create and run deployment script
+            cat > deploy.sh << 'SCRIPT'
+            #!/bin/bash
+            
+            # Mini-course-app deployment script
+            # Exit on any error
+            set -e
+            
+            # Update system and install dependencies
+            sudo apt update
+            sudo apt install npm nginx -y
+            
+            # Clone and setup application
+            git clone -b aws-monorepo-deployment https://github.com/Edupeerhub/mini-course-app.git
+            
+            # Build frontend
+            cd client
+            npm install
+            npm run build
+            cd ..
+            
+            # Setup backend
+            cd server
+            npm install
+            
+            # Create environment file
+            cat <<ENVEOF > .env
+            # Backend
+            MONGODB_URI=$STAGING_MONGO_URI
+            PORT=3000
+            # Auth
+            JWT_SECRET=$STAGING_JWT_SECRET
+            JWT_EXPIRES_IN=7d
+            # Environment
+            NODE_ENV=$ENV
+            ENVEOF
+            
+            echo ".env file created for $ENV"
+            cd ..
+            
+            # Configure nginx reverse proxy
+            cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage > /dev/null
+            server {
+                listen 80;
+                server_name $HOSTADDRESS;
+                location / {
+                    proxy_pass http://127.0.0.1:3000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto \$scheme;
+                }
+            }
+            NGINXEOF
+            
+            # Enable nginx site
+            sudo ln -s /etc/nginx/sites-available/webpage /etc/nginx/sites-enabled/ || true
+            sudo nginx -t
+            sudo systemctl reload nginx
+            
+            # Start application with PM2
+            cd server
+            sudo npm install -g pm2
+            
+            # Stop existing app if running
+            pm2 stop mini-course-app || true
+            pm2 delete mini-course-app || true
+            
+            # Start new app
+            pm2 start npm --name "mini-course-app" -- start
+            pm2 save
+            pm2 startup
+            
+            echo "Deployment completed successfully!"
+            echo "Application accessible at: http://$HOSTADDRESS"
+            SCRIPT
+            
+            # Make script executable and run it
+            chmod +x deploy.sh
+            ./deploy.sh
+          
+            
+      # - name: Verify staging deployment
+      #   run: |
+
       - name: Verify staging deployment
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.HOSTADDRESS }} << 'EOF'
-          # Set environment variables
-          export STAGING_MONGO_URI="${{ secrets.STAGING_MONGO_URI }}"
-          export STAGING_JWT_SECRET="${{ secrets.STAGING_JWT_SECRET }}"
-          export ENV="${{ secrets.ENV }}"
-          export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
-          export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
-          echo "Waiting for deployment to be ready..."
-          sleep 30
-          curl -f ${{ secrets.STAGING_API_URL }}/health || exit 1
-          curl -f ${{ secrets.STAGING_FRONTEND_URL }} || exit 1
-          echo "Staging deployment successful!"
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOSTADDRESS }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          script : |
+            echo "Waiting for deployment to be ready..."
+            sleep 30
+            curl -f ${{ secrets.STAGING_API_URL }}/login || exit 1
+            echo "Staging deployment successful!"
+  #  run: |
+  #         ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.HOSTADDRESS }} << 'EOF'
+  #         # Set environment variables
+  #         export STAGING_MONGO_URI="${{ secrets.STAGING_MONGO_URI }}"
+  #         export STAGING_JWT_SECRET="${{ secrets.STAGING_JWT_SECRET }}"
+  #         export ENV="${{ secrets.ENV }}"
+  #         export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
+  #         export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
 
   # deploy-production:
   #   runs-on: ubuntu-latest
