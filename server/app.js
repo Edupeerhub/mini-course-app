@@ -1,6 +1,17 @@
-const NODE_ENV = process.env.NODE_ENV || "development";
+const fs = require("fs");
 const path = require("path");
-require("dotenv").config({ path: path.normalize(`./.env.${NODE_ENV}`) });
+
+const NODE_ENV = process.env.NODE_ENV || "development";
+const envFilePath = path.resolve(__dirname, `.env.${NODE_ENV}`);
+
+// If .env.<env> exists, load it; otherwise fall back to base .env
+if (fs.existsSync(envFilePath)) {
+  require("dotenv").config({ path: envFilePath });
+  console.log(`Loaded env: ${envFilePath}`);
+} else {
+  require("dotenv").config();
+  console.log("Loaded default .env");
+}
 
 const express = require("express");
 const cors = require("cors");
