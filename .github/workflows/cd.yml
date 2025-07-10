@@ -31,11 +31,12 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           script: |
-            export STAGING_MONGO_URI="${{ secrets.STAGING_MONGO_URI }}"
-            export STAGING_JWT_SECRET="${{ secrets.STAGING_JWT_SECRET }}"
-            export ENV="${{ secrets.ENV }}"
+            export STAGING_MONGO_URI="${{ secrets.MONGODB_URI }}"
+            export STAGING_JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export ENV="${{ secrets.NODE_ENV }}"
             export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
             export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
+            
 
      
             # Ensure clean state
