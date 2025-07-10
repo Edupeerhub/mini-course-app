@@ -59,6 +59,7 @@ jobs:
             git clone -b aws-monorepo-deployment https://github.com/Edupeerhub/mini-course-app.git
             
             # Build frontend
+            cd mini-course-app
             cd client
             npm install
             npm run build
