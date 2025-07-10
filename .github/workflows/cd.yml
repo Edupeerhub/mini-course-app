@@ -38,7 +38,8 @@ jobs:
             export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
 
      
-            # Remove existing deployment if it exists
+            # Ensure clean state
+            sudo systemctl stop web.service || true
             rm -rf mini-course-app
             
             # Create and run deployment script
@@ -108,7 +109,31 @@ jobs:
             # Start application with PM2
             cd server
             sudo npm install 
-            sudo npm run start
+
+            # Create systemd service
+            sudo bash -c "cat > /etc/systemd/system/web.service <<EOF
+            [Unit]
+            Description=$APP_NAME Service
+            After=network.target
+
+            [Service]
+            Type=simple
+            WorkingDirectory=/home/ubuntu/mini-course-app/server
+            ExecStart=npm run start
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF"
+
+            # Start service
+            sudo systemctl daemon-reexec
+            sudo systemctl daemon-reload
+            sudo systemctl enable web.service
+            sudo systemctl restart web.service
+            sudo systemctl status web.service --no-pager
+
+            # sudo npm run start
             # -g pm2
             
             # # Stop existing app if running
@@ -128,10 +153,43 @@ jobs:
             chmod +x deploy.sh
             ls
             ./deploy.sh
-          
+ 
+
+      - name: Setup and Deploy App via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOSTADDRESS }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          script: |
+            export APP_NAME="mini-course-app"
+            export APP_DIR="/home/${USER}/${APP_NAME}"
+            export PORT=3000
+
             
-      # - name: Verify staging deployment
-      #   run: |
+
+            # Create systemd service
+            sudo bash -c "cat > /etc/systemd/system/web.service <<EOF
+            [Unit]
+            Description=$APP_NAME Service
+            After=network.target
+
+            [Service]
+            Type=simple
+            WorkingDirectory=/home/ubuntu/mini-course-app/server
+            ExecStart=npm run start
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF"
+
+            # Start service
+            sudo systemctl daemon-reexec
+            sudo systemctl daemon-reload
+            sudo systemctl enable $APP_NAME.service
+            sudo systemctl restart $APP_NAME.service
+            sudo systemctl status $APP_NAME.service --no-pager
 
       - name: Verify staging deployment
         uses: appleboy/ssh-action@v0.1.10
