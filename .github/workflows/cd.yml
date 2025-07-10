@@ -107,16 +107,18 @@ jobs:
             
             # Start application with PM2
             cd server
-            sudo npm install -g pm2
+            sudo npm install 
+            sudo npm run start
+            # -g pm2
             
-            # Stop existing app if running
-            pm2 stop mini-course-app || true
-            pm2 delete mini-course-app || true
+            # # Stop existing app if running
+            # pm2 stop mini-course-app || true
+            # pm2 delete mini-course-app || true
             
-            # Start new app
-            pm2 start npm --name "mini-course-app" -- start
-            pm2 save
-            pm2 startup
+            # # Start new app
+            # pm2 start npm --name "mini-course-app" -- start
+            # pm2 save
+            # pm2 startup
             
             echo "Deployment completed successfully!"
             echo "Application accessible at: http://$HOSTADDRESS"
