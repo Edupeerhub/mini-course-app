@@ -6,7 +6,7 @@ on:
     branches: [ main, aws-monorepo-deployment ]
   workflow_run:
     workflows: ["Frontend CI", "Backend CI"]
-    branches: [ main ]
+    branches: [ main, aws-monorepo-deployment ]
     types: [ completed ]
 
 env:
@@ -163,6 +163,6 @@ jobs:
           script : |
             echo "Waiting for deployment to be ready..."
             sleep 30
-            curl -f ${{ secrets.STAGING_API_URL }}/login || exit 1
+            curl -f http://${{ secrets.HOSTADDRESS }}/login || exit 1
             echo "Staging deployment successful!"
  

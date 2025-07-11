@@ -12,6 +12,10 @@ on:
     paths:
       - 'server/**'
       - '.github/workflows/backend-ci.yml'
+  workflow_run:
+    workflows: ["Frontend CI"]
+    branches: [ main, aws-monorepo-deployment ]
+    types: [ completed ]
 
 jobs:
   backend-ci:

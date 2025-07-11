@@ -7,6 +7,8 @@ const {
 } = require("../controller/authenticate");
 const { authenticateToken } = require("../middleware/authorize");
 
+
+
 // Public routes
 router.post("/register", register);
 router.post("/login", login);
