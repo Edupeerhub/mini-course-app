@@ -37,7 +37,7 @@ jobs:
             export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
             export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
             
-            
+
             # Ensure clean state
             sudo systemctl stop web.service || true
             rm -rf mini-course-app
@@ -86,7 +86,7 @@ jobs:
             cd ..
             
             # Configure nginx reverse proxy
-            cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage > /dev/null
+            cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
             server {
                 listen 80;
                 server_name $HOSTADDRESS;
@@ -102,7 +102,7 @@ jobs:
             NGINXEOF
             
             # Enable nginx site
-            sudo ln -s /etc/nginx/sites-available/webpage /etc/nginx/sites-enabled/ || true
+            sudo ln -s /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/ || true
             sudo nginx -t
             sudo systemctl reload nginx
             
