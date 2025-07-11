@@ -63,7 +63,7 @@ jobs:
       #   continue-on-error: true
       
       - name: Run build
-        run: npm run start
+        run: npm run build
         env:
           MONGODB_URI: "${{ secrets.MONGODB_URI }}"
       
