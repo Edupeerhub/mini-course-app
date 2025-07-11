@@ -1,0 +1,84 @@
+# .github/workflows/deploy.yml
+name: Backend CD
+
+on:
+  push:
+    branches: [staging/aws-server-deployment]
+  workflow_run:
+    workflows: ["Backend CI"]
+    branches: [staging/aws-server-deployment]
+    types: [completed]
+
+env:
+  # Global environment variables
+  NODE_VERSION: "18"
+  DEPLOYMENT_ENV: "production"
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging/aws-server-deployment'
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.BACKEND_HOST_ADDRESS }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          script: |
+            export STAGING_MONGO_URI="${{ secrets.MONGODB_URI }}"
+            export STAGING_JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export ENV="${{ secrets.NODE_ENV }}"
+            export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
+            export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
+
+
+            # Ensure clean state
+            sudo systemctl stop web.service || true
+            rm -rf mini-course-app
+
+            # Create and run deployment script
+            cat > deploy.sh << 'SCRIPT'
+            #!/bin/bash
+
+            # Mini-course-app deployment script
+            # Exit on any error
+            set -e
+
+            # Update system and install dependencies
+            sudo apt update
+            sudo apt install npm nginx -y
+
+            echo "Successfully Install Npm"
+
+            # Clone and setup application
+            git clone -b staging/aws-server-deployment https://github.com/Edupeerhub/mini-course-app.git
+
+            # Setup frontend
+            cd mini-course-app
+            cd client
+            npm install
+            npm run build
+
+            # Create environment file
+            cat <<ENVEOF > .env
+            # Frontend
+            VITE_API_URL="http://${{ secrets.BACKEND_HOST_ADDRESS }}/api"
+            ENVEOF
+
+            echo ".env file created for $ENV"
+
+
+            echo "Deployment completed successfully!"
+            echo "Application accessible at: http://$HOSTADDRESS"
+            SCRIPT
+
+            # Make script executable and run it
+            chmod +x deploy.sh
+            ls
+            ./deploy.sh
