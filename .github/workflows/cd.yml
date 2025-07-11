@@ -36,10 +36,7 @@ jobs:
             export ENV="${{ secrets.NODE_ENV }}"
             export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
             export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
-            
-
-
-     
+               
             # Ensure clean state
             sudo systemctl stop web.service || true
             rm -rf mini-course-app
