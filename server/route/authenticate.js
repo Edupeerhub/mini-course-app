@@ -11,7 +11,7 @@ const { authenticateToken } = require("../middleware/authorize");
 router.post("/register", register);
 router.post("/login", login);
 
-// Protected routes
+// Protected route
 router.get("/me", authenticateToken, getCurrentUser);
 
 module.exports = router;
