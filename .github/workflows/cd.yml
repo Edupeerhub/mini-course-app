@@ -60,9 +60,10 @@ jobs:
             git clone -b staging/aws-server-deployment https://github.com/Edupeerhub/mini-course-app.git
 
             # Setup backend
+            cd mini-course-app
             cd server
             npm install
-
+            
             # Create environment file
             cat <<ENVEOF > .env
             # Backend
