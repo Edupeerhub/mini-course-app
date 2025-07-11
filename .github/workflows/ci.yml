@@ -1,0 +1,63 @@
+# .github/workflows/ci.yml
+name: Backend CI
+
+on:
+  push:
+    branches: [staging/aws-server-deployment]
+    paths:
+      - "server/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "server/**"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # For Node.js backend
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+
+      # - name: Run linting
+      #   run: npm run lint
+
+      # - name: Run database migrations
+      #   run: npm run migrate
+      #   env:
+      #     DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      #     NODE_ENV: test
+
+      # - name: Run tests
+      #   run: npm run test -- --coverage
+      #   env:
+      #     DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      #     REDIS_URL: redis://localhost:6379
+      #     NODE_ENV: test
+
+      # - name: Upload coverage reports
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     file: ./backend/coverage/lcov.info
+      #     flags: backend
+      #     name: backend-coverage
+      #   continue-on-error: true
+
+      - name: Run build
+        run: npm run test
+        env:
+          MONGODB_URI: "${{ secrets.MONGODB_URI }}"

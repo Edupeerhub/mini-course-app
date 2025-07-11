@@ -1,0 +1,137 @@
+# .github/workflows/deploy.yml
+name: Backend CD
+
+on:
+  push:
+    branches: [staging/aws-server-deployment]
+  workflow_run:
+    workflows: ["Backend CI"]
+    branches: [staging/aws-server-deployment]
+    types: [completed]
+
+env:
+  # Global environment variables
+  NODE_VERSION: "18"
+  DEPLOYMENT_ENV: "production"
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging/aws-server-deployment'
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.BACKEND_HOST_ADDRESS }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.PRIVATE_SSH_KEY }}
+          script: |
+            export STAGING_MONGO_URI="${{ secrets.MONGODB_URI }}"
+            export STAGING_JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export ENV="${{ secrets.NODE_ENV }}"
+            export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
+            export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
+
+
+            # Ensure clean state
+            sudo systemctl stop web.service || true
+            rm -rf mini-course-app
+
+            # Create and run deployment script
+            cat > deploy.sh << 'SCRIPT'
+            #!/bin/bash
+
+            # Mini-course-app deployment script
+            # Exit on any error
+            set -e
+
+            # Update system and install dependencies
+            sudo apt update
+            sudo apt install npm nginx -y
+
+            echo "Successfully Install Npm"
+
+            # Clone and setup application
+            git clone -b staging/aws-server-deployment https://github.com/Edupeerhub/mini-course-app.git
+
+            # Setup backend
+            cd mini-course-app
+            cd server
+            npm install
+            
+            # Create environment file
+            cat <<ENVEOF > .env
+            # Backend
+            MONGODB_URI=$STAGING_MONGO_URI
+            PORT=3000
+            # Auth
+            JWT_SECRET=$STAGING_JWT_SECRET
+            JWT_EXPIRES_IN=7d
+            # Environment
+            NODE_ENV=$ENV
+            ENVEOF
+
+            echo ".env file created for $ENV"
+            cd ..
+
+            # Configure nginx reverse proxy
+            cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
+            server {
+                listen 80;
+                server_name $HOSTADDRESS;
+                location / {
+                    proxy_pass http://127.0.0.1:3000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto \$scheme;
+                }
+            }
+            NGINXEOF
+
+            # Enable nginx site
+            sudo ln -s /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/ || true
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+            # Start application with PM2
+            cd server
+            sudo npm install 
+
+            # Create systemd service
+            sudo bash -c "cat > /etc/systemd/system/web.service <<EOF
+            [Unit]
+            Description=$APP_NAME Service
+            After=network.target
+
+            [Service]
+            Type=simple
+            WorkingDirectory=/home/ubuntu/mini-course-app/server
+            ExecStart=npm run start
+            Restart=always
+
+            [Install]
+            WantedBy=multi-user.target
+            EOF"
+
+            # Start service
+            sudo systemctl daemon-reexec
+            sudo systemctl daemon-reload
+            sudo systemctl enable web.service
+            sudo systemctl restart web.service
+            sudo systemctl status web.service --no-pager
+
+            echo "Deployment completed successfully!"
+            echo "Application accessible at: http://$HOSTADDRESS"
+            SCRIPT
+
+            # Make script executable and run it
+            chmod +x deploy.sh
+            ls
+            ./deploy.sh
