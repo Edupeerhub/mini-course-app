@@ -38,6 +38,7 @@ jobs:
             export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
             
 
+
      
             # Ensure clean state
             sudo systemctl stop web.service || true
