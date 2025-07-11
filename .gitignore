@@ -1,3 +1,6 @@
+# Hide server folder temporarily to test aws
+server/
+
 # Logs
 logs
 *.log
