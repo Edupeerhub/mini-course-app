@@ -64,4 +64,6 @@ jobs:
       
       - name: Run build
         run: npm run start
+        env:
+          MONGODB_URI: "${{ secrets.MONGODB_URI }}"
       
