@@ -46,7 +46,7 @@ jobs:
 
             # Clone and setup application
             # Ensure clean state
-            rm -rf mini-course-app
+            sudo rm -rf mini-course-app
 
             git clone -b staging/aws-client-deployment https://github.com/Edupeerhub/mini-course-app.git
 
