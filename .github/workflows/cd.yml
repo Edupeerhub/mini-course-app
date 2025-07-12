@@ -47,7 +47,7 @@ jobs:
             echo "Successfully Install Npm"
 
             # Clone and setup application
-            git clone -b staging/aws-server-deployment https://github.com/Edupeerhub/mini-course-app.git
+            git clone -b staging/aws-client-deployment https://github.com/Edupeerhub/mini-course-app.git
 
             # Setup frontend
             cd mini-course-app
