@@ -9,7 +9,7 @@ const tokenGeneration = (userid) => {
   );
 };
 
-// Verifying generated Tokens.
+// Verifying generated Tokens
 const tokenVerification = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET_KEY);
 };
