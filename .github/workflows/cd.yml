@@ -77,7 +77,6 @@ jobs:
             ENVEOF
 
             echo ".env file created for $ENV"
-            cd ..
 
             # Configure nginx reverse proxy
             cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
@@ -99,10 +98,6 @@ jobs:
             sudo ln -s /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/ || true
             sudo nginx -t
             sudo systemctl reload nginx
-
-            # Start application with PM2
-            cd server
-            sudo npm install 
 
             # Create systemd service
             sudo bash -c "cat > /etc/systemd/system/web.service <<EOF
