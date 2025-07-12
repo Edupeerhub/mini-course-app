@@ -28,6 +28,7 @@ jobs:
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           script: |
 
+            export FRONTEND_HOST_ADDRESS=${{ secrets.FRONTEND_HOST_ADDRESS }}
             # Ensure clean state
             sudo systemctl stop web.service || true
             rm -rf mini-course-app
@@ -49,13 +50,7 @@ jobs:
             # Clone and setup application
             git clone -b staging/aws-client-deployment https://github.com/Edupeerhub/mini-course-app.git
 
-            # Setup frontend
-            cd mini-course-app
-            cd client
-            npm install
-            npm run build
-
-            # Create environment file
+             # Create environment file
             cat <<ENVEOF > .env
             # Frontend
             VITE_API_URL="http://${{ secrets.BACKEND_HOST_ADDRESS }}/api"
@@ -63,6 +58,33 @@ jobs:
 
             echo ".env file created for $ENV"
 
+            # Setup frontend
+            cd mini-course-app
+            cd client
+            npm install
+            npm run build
+
+            # Configure nginx to serve the React app
+            cat << 'NGINXEOF' | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
+            server {
+                listen 80;
+                server_name '"$FRONTEND_HOST_ADDRESS"';
+
+                root /home/ubuntu/mini-course-app/client/build;
+                index index.html;
+
+                location / {
+                    try_files \$uri /index.html;
+                }
+            }
+            NGINXEOF
+
+            # Enable the new Nginx site config
+            sudo ln -sf /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/webpage2
+
+            # Test and reload Nginx
+            sudo nginx -t
+            sudo systemctl reload nginx
 
             echo "Deployment completed successfully!"
             echo "Application accessible at: http://${{ secrets.FRONTEND_HOST_ADDRESS}}"
