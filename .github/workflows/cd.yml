@@ -85,7 +85,7 @@ jobs:
             NGINXEOF
 
             # Enable the new Nginx site config
-            sudo ln -sf /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/webpage2
+            sudo ln -sf /etc/nginx/sites-available/webpage /etc/nginx/sites-enabled/webpage
 
             # Test and reload Nginx
             sudo nginx -t
