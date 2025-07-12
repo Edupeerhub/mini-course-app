@@ -68,7 +68,7 @@ jobs:
             cat << 'NGINXEOF' | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
             server {
                 listen 80;
-                server_name '"$FRONTEND_HOST_ADDRESS"';
+                server_name $FRONTEND_HOST_ADDRESS;
 
                 root /home/ubuntu/mini-course-app/client/dist;
                 index index.html;
