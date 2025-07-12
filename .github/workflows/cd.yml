@@ -70,7 +70,7 @@ jobs:
                 listen 80;
                 server_name '"$FRONTEND_HOST_ADDRESS"';
 
-                root /home/ubuntu/mini-course-app/client/build;
+                root /home/ubuntu/mini-course-app/client/dist;
                 index index.html;
 
                 location / {
