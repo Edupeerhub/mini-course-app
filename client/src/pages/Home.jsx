@@ -8,7 +8,7 @@ export default function Home() {
   const username = userInfo?.first_name;
   return (
     <div className="flex flex-col justify-center items-center text-center max-w-2xl">
-      <h1 className="text-4xl font-bold mb-4">Welcome to Course Hub!</h1>
+      <h1 className="text-4xl font-bold mb-4">Welcome to Course Hub!!</h1>
       <p className="text-lg mb-6 max-w-xl text-center">
         Learn modern web development through curated video courses. From
         beginner to advanced topics — build your skills at your own pace.
