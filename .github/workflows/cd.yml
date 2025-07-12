@@ -1,3 +1,100 @@
+# # .github/workflows/deploy.yml
+# name: Frontend CD
+
+# on:
+#   push:
+#     branches: [staging/aws-client-deployment]
+
+# env:
+#   # Global environment variables
+#   NODE_VERSION: "18"
+#   DEPLOYMENT_ENV: "production"
+
+# jobs:
+#   deploy-staging:
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/staging/aws-client-deployment'
+#     environment: staging
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Deploy via SSH
+#         uses: appleboy/ssh-action@v0.1.10
+#         with:
+#           host: ${{ secrets.FRONTEND_HOST_ADDRESS }}
+#           username: ${{ secrets.SERVER_USER }}
+#           key: ${{ secrets.PRIVATE_SSH_KEY }}
+#           script: |
+
+#             export FRONTEND_HOST_ADDRESS=${{ secrets.FRONTEND_HOST_ADDRESS }}
+#             # Ensure clean state
+#             sudo systemctl stop web.service || true
+#             rm -rf mini-course-app
+
+#             # Create and run deployment script
+#             cat > deploy.sh << 'SCRIPT'
+#             #!/bin/bash
+
+#             # Mini-course-app deployment script
+#             # Exit on any error
+#             set -e
+
+#             # Update system and install dependencies
+#             sudo apt update
+#             sudo apt install npm nginx -y
+
+#             echo "Successfully Install Npm"
+
+#             # Clone and setup application
+#             git clone -b staging/aws-client-deployment https://github.com/Edupeerhub/mini-course-app.git
+
+#              # Create environment file
+#             cat <<ENVEOF > .env
+#             # Frontend
+#             VITE_API_URL="http://${{ secrets.BACKEND_HOST_ADDRESS }}/api"
+#             ENVEOF
+
+#             echo ".env file created for $ENV"
+
+#             # Setup frontend
+#             cd mini-course-app
+#             cd client
+#             npm install
+#             npm run build
+
+#             # Configure nginx to serve the React app
+#             cat << 'NGINXEOF' | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
+#             server {
+#                 listen 80;
+#                 server_name $FRONTEND_HOST_ADDRESS;
+
+#                 root /home/ubuntu/mini-course-app/client/dist;
+#                 index index.html;
+
+#                 location / {
+#                     try_files \$uri /index.html;
+#                 }
+#             }
+#             NGINXEOF
+
+#             # Enable the new Nginx site config
+#             sudo ln -sf /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/webpage2
+
+#             # Test and reload Nginx
+#             sudo nginx -t
+#             sudo systemctl reload nginx
+
+#             echo "Deployment completed successfully!"
+#             echo "Application accessible at: http://${{ secrets.FRONTEND_HOST_ADDRESS}}"
+#             SCRIPT
+
+#             # Make script executable and run it
+#             chmod +x deploy.sh
+#             ls
+#             ./deploy.sh
+
 # .github/workflows/deploy.yml
 name: Frontend CD
 
@@ -27,8 +124,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           script: |
-
-            export FRONTEND_HOST_ADDRESS=${{ secrets.FRONTEND_HOST_ADDRESS }}
             # Ensure clean state
             sudo systemctl stop web.service || true
             rm -rf mini-course-app
@@ -50,47 +145,86 @@ jobs:
             # Clone and setup application
             git clone -b staging/aws-client-deployment https://github.com/Edupeerhub/mini-course-app.git
 
-             # Create environment file
+            # Setup frontend
+            cd mini-course-app/client
+
+            # Create environment file BEFORE npm install and build
             cat <<ENVEOF > .env
             # Frontend
             VITE_API_URL="http://${{ secrets.BACKEND_HOST_ADDRESS }}/api"
             ENVEOF
 
-            echo ".env file created for $ENV"
+            echo ".env file created"
 
-            # Setup frontend
-            cd mini-course-app
-            cd client
+            # Install dependencies and build
             npm install
             npm run build
 
-            # Configure nginx to serve the React app
-            cat << 'NGINXEOF' | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
+            # Configure Nginx
+            sudo tee /etc/nginx/sites-available/mini-course-app > /dev/null <<NGINXEOF
             server {
                 listen 80;
-                server_name $FRONTEND_HOST_ADDRESS;
-
-                root /home/ubuntu/mini-course-app/client/dist;
+                server_name ${{ secrets.FRONTEND_HOST_ADDRESS }};
+                root /home/${{ secrets.SERVER_USER }}/mini-course-app/client/dist;
                 index index.html;
 
+                # Handle client-side routing
                 location / {
-                    try_files \$uri /index.html;
+                    try_files \$uri \$uri/ /index.html;
                 }
+
+                # Cache static assets
+                location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+                    expires 1y;
+                    add_header Cache-Control "public, immutable";
+                }
+
+                # Gzip compression
+                gzip on;
+                gzip_vary on;
+                gzip_min_length 1024;
+                gzip_proxied any;
+                gzip_comp_level 6;
+                gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
             }
             NGINXEOF
 
-            # Enable the new Nginx site config
-            sudo ln -sf /etc/nginx/sites-available/webpage2 /etc/nginx/sites-enabled/webpage2
+            # Enable the site
+            sudo ln -sf /etc/nginx/sites-available/mini-course-app /etc/nginx/sites-enabled/
+            sudo rm -f /etc/nginx/sites-enabled/default
 
             # Test and reload Nginx
             sudo nginx -t
             sudo systemctl reload nginx
+            sudo systemctl enable nginx
+
+            # Create systemd service for the app (if needed for additional services)
+            sudo tee /etc/systemd/system/web.service > /dev/null <<SERVICEEOF
+            [Unit]
+            Description=Mini Course App
+            After=network.target
+
+            [Service]
+            Type=simple
+            User=${{ secrets.SERVER_USER }}
+            WorkingDirectory=/home/${{ secrets.SERVER_USER }}/mini-course-app/client
+            ExecStart=/usr/bin/nginx -g "daemon off;"
+            Restart=always
+            RestartSec=10
+
+            [Install]
+            WantedBy=multi-user.target
+            SERVICEEOF
+
+            # Start the service
+            sudo systemctl daemon-reload
+            sudo systemctl enable web.service
+            sudo systemctl start web.service
 
             echo "Deployment completed successfully!"
-            echo "Application accessible at: http://${{ secrets.FRONTEND_HOST_ADDRESS}}"
+            echo "Application accessible at: http://${{ secrets.FRONTEND_HOST_ADDRESS }}"
             SCRIPT
 
             # Make script executable and run it
             chmod +x deploy.sh
-            ls
             ./deploy.sh
