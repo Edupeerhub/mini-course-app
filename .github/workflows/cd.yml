@@ -34,9 +34,7 @@ jobs:
             export STAGING_MONGO_URI="${{ secrets.MONGODB_URI }}"
             export STAGING_JWT_SECRET="${{ secrets.JWT_SECRET }}"
             export ENV="${{ secrets.NODE_ENV }}"
-            export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
-            export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
-
+            export BACKEND_HOST_ADDRESS="${{ secrets.BACKEND_HOST_ADDRESS }}"
 
             # Ensure clean state
             sudo systemctl stop web.service || true
@@ -82,7 +80,7 @@ jobs:
             cat <<NGINXEOF | sudo tee /etc/nginx/sites-available/webpage2 > /dev/null
             server {
                 listen 80;
-                server_name ${{ secrets.BACKEND_HOST_ADDRESS }};
+                server_name $BACKEND_HOST_ADDRESS;
                 location / {
                     proxy_pass http://127.0.0.1:3000;
                     proxy_http_version 1.1;
