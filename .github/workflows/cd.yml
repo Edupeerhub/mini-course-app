@@ -3,11 +3,7 @@ name: Frontend CD
 
 on:
   push:
-    branches: [staging/aws-server-deployment]
-  workflow_run:
-    workflows: ["Backend CI"]
-    branches: [staging/aws-server-deployment]
-    types: [completed]
+    branches: [staging/aws-client-deployment]
 
 env:
   # Global environment variables
@@ -17,7 +13,7 @@ env:
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/staging/aws-server-deployment'
+    if: github.ref == 'refs/heads/staging/aws-client-deployment'
     environment: staging
 
     steps:
@@ -31,12 +27,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.PRIVATE_SSH_KEY }}
           script: |
-            export STAGING_MONGO_URI="${{ secrets.MONGODB_URI }}"
-            export STAGING_JWT_SECRET="${{ secrets.JWT_SECRET }}"
-            export ENV="${{ secrets.NODE_ENV }}"
-            export HOSTADDRESS="${{ secrets.HOSTADDRESS }}"
-            export SSH_PUBLIC_KEY="${{ secrets.PUBLIC_SSH_KEY }}"
-
 
             # Ensure clean state
             sudo systemctl stop web.service || true
@@ -75,7 +65,7 @@ jobs:
 
 
             echo "Deployment completed successfully!"
-            echo "Application accessible at: http://$HOSTADDRESS"
+            echo "Application accessible at: http://${{ secrets.FRONTEND_HOST_ADDRESS}}"
             SCRIPT
 
             # Make script executable and run it
