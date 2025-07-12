@@ -74,7 +74,7 @@ jobs:
             cat << 'NGINXEOF' | sudo tee /etc/nginx/sites-available/webpage > /dev/null
             server {
                 listen 80;
-                server_name ${{ secrets.FRONTENT_HOST_ADDRESS }};
+                server_name ${{ secrets.FRONTEND_HOST_ADDRESS }};
                 root /var/www/mini-course-app;
                 index index.html;
                 
